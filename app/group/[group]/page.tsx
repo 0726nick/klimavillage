@@ -90,7 +90,18 @@ export default function GroupPage() {
   }
 
   async function handleDelete(name: string) {
-    if (!confirm(`'${name}'의 기록을 삭제할까요?`)) return
+    const pw = prompt(`'${name}' 의 비밀번호를 입력하면 삭제됩니다.`)
+    if (pw === null) return // 취소
+    const { data } = await supabase
+      .from('members')
+      .select('password')
+      .eq('group_id', group)
+      .eq('name', name)
+      .single()
+    if (!data || data.password !== pw) {
+      alert('비밀번호가 틀렸어요!')
+      return
+    }
     await supabase.from('members').delete()
       .eq('group_id', group).eq('name', name)
     await supabase.from('activity_records').delete()
