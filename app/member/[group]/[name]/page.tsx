@@ -64,7 +64,7 @@ export default function MemberPage() {
 
   // ── 데이터 로드 ────────────────────────────────────
   const load = useCallback(async () => {
-    // 내 데이터
+    // 내 데이터 — 없으면 빈 레코드로 생성(upsert)해서 다음 접속에도 유지
     const { data: myRow } = await supabase
       .from('activity_records')
       .select('week1, week2')
@@ -73,7 +73,15 @@ export default function MemberPage() {
       .single()
 
     if (myRow) {
+      // 기존 데이터 복원
       setMyData({ group, name, week1: myRow.week1, week2: myRow.week2 })
+    } else {
+      // 첫 접속: 빈 레코드를 DB에 생성해 둠
+      const empty = { days: {} }
+      await supabase.from('activity_records').upsert(
+        { group_id: group, name, week1: empty, week2: empty },
+        { onConflict: 'group_id,name' }
+      )
     }
 
     // 모둠 전체 데이터
