@@ -9,9 +9,14 @@ export default function GroupPage() {
   const params = useParams()
   const group = (params.group as string).toUpperCase()
 
-  const [members, setMembers] = useState<string[]>([])
-  const [nameInput, setNameInput] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [members, setMembers]         = useState<string[]>([])
+  const [nameInput, setNameInput]     = useState('')
+  const [pwInput, setPwInput]         = useState('')
+  const [pwConfirm, setPwConfirm]     = useState('')  // 신규 등록 시 확인용
+  const [step, setStep]               = useState<'name' | 'register' | 'login'>('name')
+  const [loading, setLoading]         = useState(true)
+  const [error, setError]             = useState('')
+  const [checking, setChecking]       = useState(false)
 
   useEffect(() => { fetchMembers() }, [group])
 
@@ -26,15 +31,62 @@ export default function GroupPage() {
     setLoading(false)
   }
 
-  async function handleEnter() {
+  // 1단계: 이름 입력 후 신규/기존 판단
+  async function handleNameNext() {
     const name = nameInput.trim()
     if (!name) return
-    // upsert: 이미 있으면 그냥 입장, 없으면 생성
-    await supabase.from('members').upsert(
-      { group_id: group, name },
-      { onConflict: 'group_id,name' }
-    )
+    setChecking(true)
+    const { data } = await supabase
+      .from('members')
+      .select('name')
+      .eq('group_id', group)
+      .eq('name', name)
+      .single()
+    setChecking(false)
+    if (data) {
+      // 기존 회원 → 로그인
+      setStep('login')
+    } else {
+      // 신규 → 비밀번호 등록
+      setStep('register')
+    }
+    setError('')
+    setPwInput('')
+    setPwConfirm('')
+  }
+
+  // 2단계A: 신규 등록
+  async function handleRegister() {
+    if (!pwInput) { setError('비밀번호를 입력해주세요'); return }
+    if (pwInput !== pwConfirm) { setError('비밀번호가 일치하지 않아요'); return }
+    if (pwInput.length < 4) { setError('비밀번호는 4자 이상으로 해주세요'); return }
+    const name = nameInput.trim()
+    await supabase.from('members').insert({ group_id: group, name, password: pwInput })
     router.push(`/member/${group}/${encodeURIComponent(name)}`)
+  }
+
+  // 2단계B: 기존 로그인
+  async function handleLogin() {
+    if (!pwInput) { setError('비밀번호를 입력해주세요'); return }
+    const name = nameInput.trim()
+    const { data } = await supabase
+      .from('members')
+      .select('password')
+      .eq('group_id', group)
+      .eq('name', name)
+      .single()
+    if (!data || data.password !== pwInput) {
+      setError('비밀번호가 틀렸어요')
+      return
+    }
+    router.push(`/member/${group}/${encodeURIComponent(name)}`)
+  }
+
+  function handleBack() {
+    setStep('name')
+    setError('')
+    setPwInput('')
+    setPwConfirm('')
   }
 
   async function handleDelete(name: string) {
@@ -49,46 +101,106 @@ export default function GroupPage() {
   return (
     <div className={styles.wrap}>
       <header className={styles.topBar}>
-        <button className={styles.backBtn} onClick={() => router.push('/')}>← 뒤로</button>
+        <button className={styles.backBtn} onClick={step === 'name' ? () => router.push('/') : handleBack}>← 뒤로</button>
         <h1>{group}모둠</h1>
         <div />
       </header>
 
       <div className={styles.body}>
-        <h2>내 이름을 입력하세요</h2>
-        <p>이름을 입력하면 내 개인 활동 페이지로 이동합니다.</p>
 
-        <div className={styles.inputWrap}>
-          <input
-            value={nameInput}
-            onChange={e => setNameInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleEnter()}
-            placeholder="이름 입력..."
-            maxLength={10}
-          />
-          <button onClick={handleEnter}>입장</button>
-        </div>
+        {/* ── 1단계: 이름 입력 ── */}
+        {step === 'name' && (
+          <>
+            <h2>이름을 입력하세요</h2>
+            <p>처음 입장하면 비밀번호를 설정하고, 다시 들어올 때는 비밀번호로 확인해요.</p>
+            <div className={styles.inputWrap}>
+              <input
+                value={nameInput}
+                onChange={e => setNameInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleNameNext()}
+                placeholder="이름 입력..."
+                maxLength={10}
+                autoFocus
+              />
+              <button onClick={handleNameNext} disabled={checking}>
+                {checking ? '확인 중...' : '다음'}
+              </button>
+            </div>
 
-        {loading ? (
-          <p className={styles.loading}>불러오는 중...</p>
-        ) : members.length === 0 ? (
-          <p className={styles.empty}>아직 입장한 친구가 없어요</p>
-        ) : (
-          <div className={styles.memberList}>
-            {members.map(name => (
-              <div key={name} className={styles.memberItem}>
-                <div onClick={() => router.push(`/member/${group}/${encodeURIComponent(name)}`)}>
-                  <span className={styles.mName}>👤 {name}</span>
-                  <span className={styles.mSub}>{group}모둠 · 클릭하여 입장</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <button className={styles.deleteBtn} onClick={() => handleDelete(name)}>✕</button>
-                  <span className={styles.arrow}>›</span>
-                </div>
+            {loading ? (
+              <p className={styles.loading}>불러오는 중...</p>
+            ) : members.length === 0 ? (
+              <p className={styles.empty}>아직 입장한 친구가 없어요</p>
+            ) : (
+              <div className={styles.memberList}>
+                <p className={styles.memberListTitle}>이미 등록된 친구들</p>
+                {members.map(name => (
+                  <div key={name} className={styles.memberItem}
+                    onClick={() => { setNameInput(name); setStep('login'); setError(''); setPwInput('') }}>
+                    <div>
+                      <span className={styles.mName}>👤 {name}</span>
+                      <span className={styles.mSub}>{group}모둠 · 클릭하여 로그인</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button className={styles.deleteBtn} onClick={e => { e.stopPropagation(); handleDelete(name) }}>✕</button>
+                      <span className={styles.arrow}>›</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
+
+        {/* ── 2단계A: 신규 비밀번호 등록 ── */}
+        {step === 'register' && (
+          <>
+            <div className={styles.stepBadge}>🆕 처음 입장</div>
+            <h2>비밀번호를 설정하세요</h2>
+            <p><strong>{nameInput}</strong> 님, 처음 오셨네요! 다음에 다시 들어올 때 쓸 비밀번호를 정해주세요.</p>
+            <div className={styles.pwWrap}>
+              <input
+                type="password"
+                value={pwInput}
+                onChange={e => { setPwInput(e.target.value); setError('') }}
+                onKeyDown={e => e.key === 'Enter' && handleRegister()}
+                placeholder="비밀번호 (4자 이상)"
+                autoFocus
+              />
+              <input
+                type="password"
+                value={pwConfirm}
+                onChange={e => { setPwConfirm(e.target.value); setError('') }}
+                onKeyDown={e => e.key === 'Enter' && handleRegister()}
+                placeholder="비밀번호 확인"
+              />
+              {error && <p className={styles.errorMsg}>⚠️ {error}</p>}
+              <button className={styles.btnFull} onClick={handleRegister}>등록하고 입장 🌱</button>
+            </div>
+          </>
+        )}
+
+        {/* ── 2단계B: 기존 로그인 ── */}
+        {step === 'login' && (
+          <>
+            <div className={styles.stepBadge}>👋 다시 오셨군요</div>
+            <h2>비밀번호를 입력하세요</h2>
+            <p><strong>{nameInput}</strong> 님의 비밀번호를 입력해주세요.</p>
+            <div className={styles.pwWrap}>
+              <input
+                type="password"
+                value={pwInput}
+                onChange={e => { setPwInput(e.target.value); setError('') }}
+                onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                placeholder="비밀번호 입력..."
+                autoFocus
+              />
+              {error && <p className={styles.errorMsg}>⚠️ {error}</p>}
+              <button className={styles.btnFull} onClick={handleLogin}>입장하기 →</button>
+            </div>
+          </>
+        )}
+
       </div>
     </div>
   )

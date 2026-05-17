@@ -57,6 +57,62 @@
 
 .loading, .empty { color: #aaa; text-align: center; padding: 20px; font-size: 0.88rem; }
 
+.stepBadge {
+  display: inline-block;
+  background: var(--eco-pale);
+  color: var(--eco-green);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.pwWrap { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.pwWrap input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: 'Nanum Gothic', sans-serif;
+  outline: none;
+  background: white;
+  transition: border-color 0.2s;
+}
+.pwWrap input:focus { border-color: var(--eco-light); }
+
+.btnFull {
+  width: 100%;
+  padding: 15px;
+  background: var(--eco-green);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 4px;
+}
+.btnFull:hover { background: var(--eco-light); }
+
+.errorMsg {
+  color: var(--carbon);
+  font-size: 0.85rem;
+  background: var(--carbon-pale);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin: 0;
+}
+
+.memberListTitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
 .memberList { display: flex; flex-direction: column; gap: 10px; }
 .memberItem {
   background: white;
