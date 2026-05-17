@@ -1,0 +1,49 @@
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #e8f5ee 0%, #d4ede8 40%, #c8e6d4 100%);
+  padding: 40px 20px;
+}
+
+.hero { text-align: center; margin-bottom: 48px; }
+.leafIcon { font-size: 64px; animation: float 3s ease-in-out infinite; margin-bottom: 12px; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+.hero h1 {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 2.2rem;
+  color: var(--eco-green);
+  margin-bottom: 8px;
+}
+.hero p { color: var(--text-muted); }
+
+.groupGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.groupCard {
+  background: white;
+  border: 3px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(45,122,79,0.08);
+}
+.groupCard:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(45,122,79,0.2);
+  border-color: var(--gc, var(--eco-light));
+}
+
+.groupEmoji { font-size: 2.5rem; margin-bottom: 10px; }
+.groupLabel { font-family: 'Black Han Sans', sans-serif; font-size: 1.5rem; }
+.groupSub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }

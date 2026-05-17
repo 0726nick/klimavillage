@@ -1,0 +1,40 @@
+:root {
+  --eco-green: #2d7a4f;
+  --eco-light: #4caf7d;
+  --eco-pale: #e8f5ee;
+  --sky: #1a6fa8;
+  --sky-light: #4a9fd4;
+  --sky-pale: #e3f2fd;
+  --carbon: #c0392b;
+  --carbon-light: #e74c3c;
+  --carbon-pale: #fdecea;
+  --gold: #f0a500;
+  --gold-pale: #fff8e1;
+  --bg: #f0f4f0;
+  --card: #ffffff;
+  --text: #1a2e1a;
+  --text-muted: #5a7a5a;
+  --border: #c8dcc8;
+  --shadow: 0 4px 20px rgba(45,122,79,0.12);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nanum Gothic', 'Apple SD Gothic Neo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0) }
+  50%      { transform: translateY(-10px) }
+}
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(12px) }
+  to   { opacity:1; transform:translateY(0) }
+}
+.fade-in { animation: fadeIn 0.35s ease; }
