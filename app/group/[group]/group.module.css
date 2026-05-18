@@ -113,6 +113,39 @@
   font-weight: 700;
 }
 
+.capacityBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--eco-pale);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  margin-bottom: 18px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.capacityBar .full { color: var(--carbon); }
+
+.fullWrap { text-align: center; padding: 20px 0; }
+.fullIcon { font-size: 3.5rem; margin-bottom: 14px; }
+.fullWrap h2 { font-family: 'Black Han Sans', sans-serif; font-size: 1.4rem; color: var(--carbon); margin-bottom: 10px; }
+.fullWrap p  { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+
+.btnBack {
+  margin-top: 20px;
+  background: none;
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  padding: 10px 24px;
+  border-radius: var(--radius-sm);
+  font-family: 'Nanum Gothic', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnBack:hover { border-color: var(--eco-light); color: var(--eco-green); }
+
 .memberList { display: flex; flex-direction: column; gap: 10px; }
 .memberItem {
   background: white;

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { GROUP_SIZE } from '@/lib/constants'
 import styles from './group.module.css'
 
 export default function GroupPage() {
@@ -9,11 +10,13 @@ export default function GroupPage() {
   const params = useParams()
   const group = (params.group as string).toUpperCase()
 
+  const maxSize = GROUP_SIZE[group] ?? 4
+
   const [members, setMembers]         = useState<string[]>([])
   const [nameInput, setNameInput]     = useState('')
   const [pwInput, setPwInput]         = useState('')
-  const [pwConfirm, setPwConfirm]     = useState('')  // 신규 등록 시 확인용
-  const [step, setStep]               = useState<'name' | 'register' | 'login'>('name')
+  const [pwConfirm, setPwConfirm]     = useState('')
+  const [step, setStep]               = useState<'name' | 'register' | 'login' | 'full'>('name')
   const [loading, setLoading]         = useState(true)
   const [error, setError]             = useState('')
   const [checking, setChecking]       = useState(false)
@@ -43,11 +46,16 @@ export default function GroupPage() {
       .eq('name', name)
       .single()
     setChecking(false)
+
     if (data) {
       // 기존 회원 → 로그인
       setStep('login')
     } else {
-      // 신규 → 비밀번호 등록
+      // 신규 → 정원 확인
+      if (members.length >= maxSize) {
+        setStep('full')
+        return
+      }
       setStep('register')
     }
     setError('')
@@ -60,6 +68,12 @@ export default function GroupPage() {
     if (!pwInput) { setError('비밀번호를 입력해주세요'); return }
     if (pwInput !== pwConfirm) { setError('비밀번호가 일치하지 않아요'); return }
     if (pwInput.length < 4) { setError('비밀번호는 4자 이상으로 해주세요'); return }
+    // 등록 직전 정원 재확인 (동시 가입 방지)
+    const { count } = await supabase
+      .from('members')
+      .select('*', { count: 'exact', head: true })
+      .eq('group_id', group)
+    if ((count ?? 0) >= maxSize) { setStep('full'); return }
     const name = nameInput.trim()
     await supabase.from('members').insert({ group_id: group, name, password: pwInput })
     router.push(`/member/${group}/${encodeURIComponent(name)}`)
@@ -122,6 +136,10 @@ export default function GroupPage() {
         {/* ── 1단계: 이름 입력 ── */}
         {step === 'name' && (
           <>
+            <div className={styles.capacityBar}>
+              <span>모둠 정원</span>
+              <span className={members.length >= maxSize ? styles.full : ''}>{members.length} / {maxSize}명</span>
+            </div>
             <h2>이름을 입력하세요</h2>
             <p>처음 입장하면 비밀번호를 설정하고, 다시 들어올 때는 비밀번호로 확인해요.</p>
             <div className={styles.inputWrap}>
@@ -161,6 +179,29 @@ export default function GroupPage() {
               </div>
             )}
           </>
+        )}
+
+        {/* ── 정원 초과 ── */}
+        {step === 'full' && (
+          <div className={styles.fullWrap}>
+            <div className={styles.fullIcon}>🚫</div>
+            <h2>{group}모둠 정원이 찼어요!</h2>
+            <p>{group}모둠은 최대 <strong>{maxSize}명</strong>까지 입장할 수 있어요.<br />이미 {members.length}명이 등록되어 있습니다.</p>
+            <p style={{ marginTop: 12, color: '#aaa', fontSize: '0.85rem' }}>이미 등록한 경우 이름을 클릭해 로그인하세요.</p>
+            <div className={styles.memberList} style={{ marginTop: 16 }}>
+              {members.map(name => (
+                <div key={name} className={styles.memberItem}
+                  onClick={() => { setNameInput(name); setStep('login'); setError(''); setPwInput('') }}>
+                  <div>
+                    <span className={styles.mName}>👤 {name}</span>
+                    <span className={styles.mSub}>클릭하여 로그인</span>
+                  </div>
+                  <span className={styles.arrow}>›</span>
+                </div>
+              ))}
+            </div>
+            <button className={styles.btnBack} onClick={handleBack}>← 뒤로</button>
+          </div>
         )}
 
         {/* ── 2단계A: 신규 비밀번호 등록 ── */}
