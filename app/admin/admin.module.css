@@ -1,0 +1,260 @@
+/* ── 로그인 ── */
+.loginWrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #1a2e1a 0%, #0d1f0d 100%);
+}
+.loginCard {
+  background: white;
+  border-radius: 20px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.loginIcon { font-size: 3rem; margin-bottom: 12px; }
+.loginCard h1 { font-family: 'Black Han Sans', sans-serif; font-size: 1.6rem; color: var(--eco-green); margin-bottom: 6px; }
+.loginCard p  { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
+.loginCard input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: 'Nanum Gothic', sans-serif;
+  outline: none;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.loginCard input:focus { border-color: var(--eco-light); }
+.loginCard button {
+  width: 100%;
+  padding: 14px;
+  background: var(--eco-green);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.2s;
+}
+.loginCard button:hover { background: var(--eco-light); }
+.backBtn {
+  background: none !important;
+  color: var(--text-muted) !important;
+  font-family: 'Nanum Gothic', sans-serif !important;
+  font-size: 0.85rem !important;
+  text-decoration: underline;
+}
+.errorMsg { color: var(--carbon); font-size: 0.85rem; background: var(--carbon-pale); padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+
+/* ── 전체 레이아웃 ── */
+.wrap { min-height: 100vh; background: #f5f5f5; }
+.topBar {
+  background: linear-gradient(135deg, #1a2e1a 0%, #0d1f0d 100%);
+  color: white;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.3);
+}
+.topBar h1 { font-family: 'Black Han Sans', sans-serif; font-size: 1.2rem; }
+.headerBack {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: 'Nanum Gothic', sans-serif;
+}
+.headerBack:hover { background: rgba(255,255,255,0.25); }
+.refreshBtn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: 'Nanum Gothic', sans-serif;
+}
+.refreshBtn:hover { background: rgba(255,255,255,0.25); }
+
+/* ── 탭 ── */
+.tabs {
+  display: flex;
+  gap: 0;
+  background: white;
+  border-bottom: 2px solid var(--border);
+  padding: 0 20px;
+}
+.tab {
+  padding: 14px 24px;
+  border: none;
+  background: none;
+  font-family: 'Nanum Gothic', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+.activeTab { color: var(--eco-green); border-bottom-color: var(--eco-green); }
+
+.body { padding: 20px; max-width: 900px; margin: 0 auto; }
+.loading { text-align: center; color: #aaa; padding: 40px; }
+.empty   { text-align: center; color: #aaa; padding: 20px; font-size: 0.88rem; }
+
+/* ── 모둠 카드 ── */
+.groupCard {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.groupHeader {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background: #fafafa;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.groupHeader:hover { background: var(--eco-pale); }
+.groupTitle { display: flex; align-items: center; gap: 10px; }
+.groupBadge {
+  background: var(--eco-green);
+  color: white;
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 1rem;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+.groupSize  { font-size: 0.82rem; color: var(--text-muted); font-weight: 700; }
+.memberCount { font-size: 0.82rem; color: var(--text-muted); }
+
+/* ── 통계 그리드 ── */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.statItem { background: white; padding: 16px 12px; text-align: center; }
+.statVal   { font-family: 'Black Han Sans', sans-serif; font-size: 1.4rem; }
+.statLabel { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+
+/* ── 진행 바 ── */
+.barSection { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; }
+.barRow { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+.barBg   { background: #f0f0f0; border-radius: 10px; height: 8px; overflow: hidden; }
+.barFill { height: 100%; border-radius: 10px; transition: width 0.5s; }
+
+/* ── 개인별 테이블 (개요) ── */
+.memberTable { padding: 0 20px 16px; }
+.tableHeader {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: #fafafa;
+  border-radius: 8px;
+  margin: 12px 0 4px;
+}
+.tableRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #f5f5f5;
+  align-items: center;
+}
+.tableRow:hover { background: #fafff8; }
+.memberName { font-weight: 700; }
+
+.groupActions { display: flex; justify-content: flex-end; padding-top: 12px; }
+.btnResetGroup {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-family: 'Nanum Gothic', sans-serif;
+  cursor: pointer;
+  font-weight: 700;
+}
+.btnResetGroup:hover { background: #ffe0b2; }
+
+/* ── 개인별 관리 탭 ── */
+.memberManageList { padding: 12px 20px 16px; }
+.manageRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  background: white;
+  transition: background 0.15s;
+}
+.manageRow:hover { background: #fafff8; }
+.manageInfo { flex: 1; }
+.manageName { font-weight: 700; font-size: 0.95rem; margin-bottom: 3px; }
+.manageSub  { font-size: 0.78rem; color: var(--text-muted); }
+.manageActions { display: flex; gap: 8px; flex-shrink: 0; }
+.btnReset {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-family: 'Nanum Gothic', sans-serif;
+  cursor: pointer;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.btnReset:hover { background: #ffe0b2; }
+.btnDelete {
+  background: var(--carbon-pale);
+  color: var(--carbon);
+  border: 1px solid #ffcdd2;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-family: 'Nanum Gothic', sans-serif;
+  cursor: pointer;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.btnDelete:hover { background: #ffcdd2; }
+
+@media (max-width: 600px) {
+  .statGrid { grid-template-columns: repeat(2, 1fr); }
+  .tableHeader, .tableRow { grid-template-columns: 1fr 1fr 1fr; font-size: 0.72rem; }
+  .tableHeader div:nth-child(n+4), .tableRow div:nth-child(n+4) { display: none; }
+  .manageRow { flex-direction: column; align-items: flex-start; gap: 10px; }
+}

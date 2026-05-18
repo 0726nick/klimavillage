@@ -32,6 +32,9 @@ export default function Home() {
           </button>
         ))}
       </div>
+      <button className={styles.adminLink} onClick={() => router.push('/admin')}>
+        🔐 관리자
+      </button>
     </main>
   )
 }
